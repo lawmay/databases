@@ -91,15 +91,14 @@ exports.readMessages = function(cb) {
 };
 
 exports.readMessagesByRoom = function(roomName, cb) {
-  exports.roomExists(roomName, function(roomId) {
-    if (roomId === undefined) {
-      cb([]);
-    } else {
-      connection.query('SELECT * FROM messages WHERE id_room = ' + roomId, function(err, messages) {
-        if (err) throw err;
-        cb(messages);
-      });
-    }
+  connection.query( 'SELECT messages.id, text, rooms.name AS roomname, users.name AS username FROM messages ' +
+                    'LEFT JOIN rooms ON messages.id_room = rooms.id ' +
+                    'LEFT JOIN users ON messages.id_user = users.id ' +
+                    'WHERE rooms.name = ' + connection.escape(roomName),
+                    function(err, messages) {
+    if (err) throw err;
+
+    cb(messages);
   });
 };
 

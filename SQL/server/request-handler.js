@@ -51,7 +51,6 @@ exports.handleRequest = function(request, response) {
     } else {
       helpers.readMessages(function(messages) {
         var responseText = JSON.stringify({results: messages});
-        console.log(responseText);
         sendResponse(200, responseText, response);
       });
     }

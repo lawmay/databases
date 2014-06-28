@@ -2,7 +2,7 @@
  * for these tests to pass. */
 
 var mysql = require('mysql');
-var request = require("request"); // You might need to npm install the request module!
+var request = require('request'); // You might need to npm install the request module!
 var expect = require('../../node_modules/chai/chai').expect;
 
 describe("Persistent Node Chat Server", function() {
@@ -22,7 +22,9 @@ describe("Persistent Node Chat Server", function() {
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
-    dbConnection.query("DELETE FROM " + tablename, done);
+    dbConnection.query("DELETE FROM " + tablename);
+    dbConnection.query("DELETE FROM rooms");
+    dbConnection.query("DELETE FROM users", done);
   });
 
   afterEach(function() {
@@ -32,15 +34,20 @@ describe("Persistent Node Chat Server", function() {
   it("Should insert posted messages to the DB", function(done) {
     // Post a message to the node chat server:
     request({method: "POST",
-             uri: "http://127.0.0.1:8080/classes/room1",
+             uri: "http://127.0.0.1:1337/classes/room/room1",
              form: {username: "Valjean",
-                    message: "In mercy's name, three days is all I need."}
+                    text: "In mercy's name, three days is all I need.",
+                    roomname: 'room1'
+                  }
             },
             function(error, response, body) {
               /* Now if we look in the database, we should find the
                * posted message there. */
 
-              var queryString = "";
+              var queryString = 'SELECT messages.id, messages.text AS message, rooms.name AS roomname, users.name AS username FROM messages ' +
+                                'LEFT JOIN rooms ON messages.id_room = rooms.id ' +
+                                'LEFT JOIN users ON messages.id_user = users.id';
+              // var queryString = 'SELECT * FROM messages'
               var queryArgs = [];
               /* TODO: Change the above queryString & queryArgs to match your schema design
                * The exact query string and query args to use
@@ -49,6 +56,7 @@ describe("Persistent Node Chat Server", function() {
               dbConnection.query( queryString, queryArgs,
                 function(err, results, fields) {
                   // Should have one result:
+                  console.log(results);
                   expect(results.length).to.equal(1);
                   expect(results[0].username).to.equal("Valjean");
                   expect(results[0].message).to.equal("In mercy's name, three days is all I need.");
@@ -73,7 +81,7 @@ describe("Persistent Node Chat Server", function() {
       function(err, results, fields) {
         /* Now query the Node chat server and see if it returns
          * the message we just inserted: */
-        request("http://127.0.0.1:8080/classes/room1",
+        request("http://127.0.0.1:1337/classes/room1",
           function(error, response, body) {
             var messageLog = JSON.parse(body);
             expect(messageLog[0].username).to.equal("Javert");

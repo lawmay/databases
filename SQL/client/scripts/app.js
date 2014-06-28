@@ -9,7 +9,7 @@ var app = {
   friends: {},
   lastObjKey: '',
   messages: [],
-  currentRoomname: 'room1'
+  currentRoomname: 'room8'
 };
 
 app.init = function() {
