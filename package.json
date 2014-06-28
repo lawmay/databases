@@ -1,0 +1,26 @@
+{
+  "name": "2014-06-databases",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "mysql": "~2.3.2"
+  },
+  "devDependencies": {
+    "request": "~2.36.0",
+    "chai": "~1.9.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lawmay/2014-06-databases.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lawmay/2014-06-databases/issues"
+  },
+  "homepage": "https://github.com/lawmay/2014-06-databases"
+}
